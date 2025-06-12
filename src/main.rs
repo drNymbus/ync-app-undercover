@@ -72,7 +72,7 @@ impl Application {
     }
 
     fn view(&self) -> Element<AppMessage> {
-        let mut element;
+        let element;
 
         match self.state {
             AppState::StateMenu => { element = self.menu.view().map(AppMessage::InteractMenu); }

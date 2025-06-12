@@ -39,16 +39,16 @@ impl Player {
     }
 
     pub fn name(&self) -> &String { &self.name }
+    pub fn role(&self) -> &Role { &self.role }
+    /*
     pub fn set_name(&mut self, name: String) {
         Self::assert_name(&name);
         self.name = name;
     }
-
-    pub fn role(&self) -> &Role { &self.role }
     pub fn set_role(&mut self, role: Role) {
         self.role = role;
     }
-
+    */
     pub fn alive(&self) -> &bool { &self.alive }
     pub fn set_alive(&mut self, val: bool) { self.alive = val; }
 }

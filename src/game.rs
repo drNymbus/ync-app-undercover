@@ -1,3 +1,4 @@
+use std::fs;
 use rand;
 use std::collections::BTreeMap;
 
@@ -54,9 +55,15 @@ impl Default for Game {
 
 impl Game {
     fn generate_words() -> BTreeMap<Role, String> {
+        let file_string: String = fs::read_to_string("./src/undercover.txt").expect("Cannot open file 'undercover.txt'");
+        let mut lines = file_string.split('\n');
+        let index = rand::random_range(0..lines.clone().count());
+        let mut pair = lines.nth(index).expect("Error parsing 'undercover.txt'").split(':');
+
+        let err_msg = String::from("Error parsing line ") + &index.to_string();
         let mut words: BTreeMap<Role, String> = BTreeMap::new();
-        words.insert(Role::CITIZEN, "Messi".into());
-        words.insert(Role::UNDERCOVER, "Ronaldo".into());
+        words.insert(Role::CITIZEN, pair.next().expect(&err_msg).into());
+        words.insert(Role::UNDERCOVER, pair.next().expect(&err_msg).into());
         words
     }
 
@@ -192,8 +199,8 @@ impl Game {
     }
 
     pub fn view(&self) -> Element<GameMessage> {
-        let PADDING_SIZE = 20;
-        let TEXT_SIZE = 25;
+        let padding_size = 20;
+        let text_size = 25;
         let mut display = column![];
 
         if *self.over() {
@@ -202,54 +209,54 @@ impl Game {
                 Role::WHITE => { msg = self.winner().to_string() + &String::from(" a gagné!"); }
                 _ => { msg = String::from("Les ") + &self.winner().to_string() + &String::from("s ont gagné!"); }
             }
-            display = display.push(text(msg).size(TEXT_SIZE));
-            display = display.push(text(String::from("Le mot des CIVILs: ") + &self.words[&Role::CITIZEN].to_string()).size(TEXT_SIZE/2));
-            display = display.push(text(String::from("Le mot des UNDERCOVERs: ") + &self.words[&Role::UNDERCOVER].to_string()).size(TEXT_SIZE/2));
+            display = display.push(text(msg).size(text_size));
+            display = display.push(text(String::from("Le mot des CIVILs: ") + &self.words[&Role::CITIZEN].to_string()).size(text_size/2));
+            display = display.push(text(String::from("Le mot des UNDERCOVERs: ") + &self.words[&Role::UNDERCOVER].to_string()).size(text_size/2));
             display = display.push(button("Menu").on_press(GameMessage::Done));
-            display = display.spacing(PADDING_SIZE);
+            display = display.spacing(padding_size);
         } else {
             match &self.state {
                 GameState::REVEAL => {
                     let player = &self.players[self.index];
-                    display = display.push(text(player.name()).size(TEXT_SIZE));
+                    display = display.push(text(player.name()).size(text_size));
 
                     if self.show {
                         if *player.role() == Role::WHITE {
                             display = display.push(text("Tu es Mr. White"));
                         } else {
-                            display = display.push(text(String::from("Ton mot est: ") + &self.words[player.role()].clone()).size(TEXT_SIZE - 5));
+                            display = display.push(text(String::from("Ton mot est: ") + &self.words[player.role()].clone()).size(text_size - 5));
                         }
                         display = display.push(button("Suivant").on_press(GameMessage::Next));
                     } else {
                         display = display.push(button("Révéler").on_press(GameMessage::Revealing));
                     }
-                    display = display.spacing(PADDING_SIZE);
+                    display = display.spacing(padding_size);
                 }
 
                 GameState::POLL => {
                     if self.show {
                         let name = self.players[self.index].name();
                         let question = String::from("Exclure ") + name + &String::from("?");
-                        display = display.push(text(question).size(TEXT_SIZE));
+                        display = display.push(text(question).size(text_size));
                         display = display.push(row![
                             button("Non").on_press(GameMessage::Confirm(false)),
                             button("Oui").on_press(GameMessage::Confirm(true))
-                        ].spacing(PADDING_SIZE));
+                        ].spacing(padding_size));
                     } else {
                         let name = self.players[self.first].name();
-                        display = display.push(row![text(name.clone() + &String::from(" commence")).size(TEXT_SIZE)].padding(PADDING_SIZE));
+                        display = display.push(row![text(name.clone() + &String::from(" commence")).size(text_size)].padding(padding_size));
 
                         for i in 0..self.players.len() {
                             let player = &self.players[i];
                             let mut player_row = row![];
-                            player_row = player_row.push(text(self.players[i].name()).size(TEXT_SIZE));
+                            player_row = player_row.push(text(self.players[i].name()).size(text_size));
                             if !*player.alive() {
                                 player_row = player_row.push(text(player.role().to_string()));
                             } else {
                                 player_row = player_row.push(button("Vote").on_press(GameMessage::Eliminate(i)));
                             }
 
-                            display = display.push(player_row.spacing(PADDING_SIZE).align_y(Center));
+                            display = display.push(player_row.spacing(padding_size).align_y(Center));
                         }
                     }
                 }

@@ -126,8 +126,8 @@ impl Menu {
     }
 
     pub fn view(&self) -> Element<MenuMessage> {
-        let PADDING_SIZE = 20;
-        let TEXT_SIZE = 25;
+        let padding_size = 20;
+        let text_size = 25;
 
         let undercover_row: Row<MenuMessage> = row![
             button("-").on_press(MenuMessage::DecrementUndercover),
@@ -140,19 +140,19 @@ impl Menu {
             let mut player_row = row![];
 
             if i == self.index {
-                player_row = player_row.push(text_input("", &self.names[i]).on_input(MenuMessage::EditName).size(TEXT_SIZE));
+                player_row = player_row.push(text_input("", &self.names[i]).on_input(MenuMessage::EditName).size(text_size));
             } else {
-                player_row = player_row.push(text(self.names[i].clone()).size(TEXT_SIZE - 10));
+                player_row = player_row.push(text(self.names[i].clone()).size(text_size - 10));
                 player_row = player_row.push(button("Edit").on_press(MenuMessage::EditIndex(i)));
             }
             player_row = player_row.push(button("Delete").on_press(MenuMessage::RemoveName(i)));
-            player_row = player_row.align_y(Center).spacing(PADDING_SIZE);
+            player_row = player_row.align_y(Center).spacing(padding_size);
 
             player_list = player_list.push(player_row);
         }
 
         let content: Column<MenuMessage> = column![
-            text("Young New Undercover").size(TEXT_SIZE*2),
+            text("Young New Undercover").size(text_size*2),
             column![
                 text(String::from("Citizen: ") + &self.citizen.to_string()),
                 undercover_row,
@@ -162,9 +162,9 @@ impl Menu {
                 player_list,
                 button("Add Player").on_press(MenuMessage::AddName),
                 button("Ok").on_press(MenuMessage::Done)
-            ].align_x(Center).spacing(PADDING_SIZE/2).padding(PADDING_SIZE)
+            ].align_x(Center).spacing(padding_size/2).padding(padding_size)
         ].align_x(Center).into();
 
-        center(content).padding(PADDING_SIZE * 2).into()
+        center(content).padding(padding_size * 2).into()
     }
 }
