@@ -1,4 +1,3 @@
-use std::fs;
 use rand;
 use std::collections::BTreeMap;
 
@@ -55,7 +54,7 @@ impl Default for Game {
 
 impl Game {
     fn generate_words() -> BTreeMap<Role, String> {
-        let file_string: String = fs::read_to_string("./src/undercover.txt").expect("Cannot open file 'undercover.txt'");
+        let file_string: &str = include_str!("undercover.txt");
         let mut lines = file_string.split('\n');
         let index = rand::random_range(0..lines.clone().count());
         let mut pair = lines.nth(index).expect("Error parsing 'undercover.txt'").split(':');

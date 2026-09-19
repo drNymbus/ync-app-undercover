@@ -5,8 +5,11 @@ edition = "2024"
 
 [dependencies]
 iced = "0.13.1"
-model = "0.1.2"
 rand = "0.9.1"
+
+[target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dependencies]
+getrandom = { version = "0.3", features = ["wasm_js"] }
+iced = { version = "0.13.1", features = ["webgl", "web-colors"] }
 
 [[bin]]
 name = "undercover"
