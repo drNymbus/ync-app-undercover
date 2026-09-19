@@ -11,7 +11,7 @@ COPY Cargo.toml Cargo.lock ./
 COPY index.html ./index.html
 COPY src ./src
 
-RUN trunk build --release
+RUN trunk build --release --public-url /undercover/
 
 # --- Runtime stage: serve the static build ---
 FROM docker.io/library/httpd:2.4
@@ -19,4 +19,4 @@ FROM docker.io/library/httpd:2.4
 RUN sed -i 's/^Listen 80$/Listen 8080/' /usr/local/apache2/conf/httpd.conf \
     && echo 'AddType application/wasm .wasm' >> /usr/local/apache2/conf/httpd.conf
 
-COPY --from=builder /app/dist/ /usr/local/apache2/htdocs/
+COPY --from=builder /app/dist/ /usr/local/apache2/htdocs/undercover/
